@@ -1,0 +1,115 @@
+# Namespace
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: quote-app
+
+# Backend Deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-backend
+  namespace: quote-app
+  labels:
+    app: quote-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quote-backend
+  template:
+    metadata:
+      labels:
+        app: quote-backend
+    spec:
+      containers:
+        - name: backend
+          image: timursamanchi/quote-docker-app-backend
+          ports:
+            - containerPort: 8080
+
+# Backend Service
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: quote-backend
+  namespace: quote-app
+  labels:
+    app: quote-backend
+spec:
+  selector:
+    app: quote-backend
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8080
+      targetPort: 8080
+
+# Frontend Deployment
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: quote-frontend
+  namespace: quote-app
+  labels:
+    app: quote-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: quote-frontend
+  template:
+    metadata:
+      labels:
+        app: quote-frontend
+    spec:
+      containers:
+        - name: frontend
+          image: timursamanchi/quote-docker-app-frontend
+          ports:
+            - containerPort: 80
+
+# Frontend Service
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: quote-frontend
+  namespace: quote-app
+  labels:
+    app: quote-frontend
+spec:
+  selector:
+    app: quote-frontend
+  type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+---
+# ingress.yaml
+
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: quote-ingress
+  namespace: quote-app
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: quote.test
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: quote-frontend
+            port:
+              number: 80
