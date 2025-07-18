@@ -4,7 +4,7 @@ apiVersion: v1
 kind: Namespace
 metadata:
   name: quote-app
-
+---
 # Backend Deployment
 ---
 apiVersion: apps/v1
@@ -29,7 +29,7 @@ spec:
       image: timursamanchi/quote-docker-app-backend
       ports:
         - containerPort: 8080
-
+---
 # Backend Service
 ---
 apiVersion: v1
@@ -47,7 +47,7 @@ spec:
     - protocol: TCP
       port: 8080
       targetPort: 8080
-
+---
 # Frontend Deployment
 ---
 apiVersion: apps/v1
