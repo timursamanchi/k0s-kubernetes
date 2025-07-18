@@ -1,0 +1,21 @@
+# local biuld dockerfile: build context field is requred.
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    image: timursamanchi/quote-frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: timursamanchi/quote-backend
+    ports:
+      - "8081:8080"

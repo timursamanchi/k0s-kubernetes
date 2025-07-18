@@ -1,0 +1,18 @@
+# ec2 specific dockerfile: no build context field.
+version: '3.8'
+
+services:
+  
+  backend:
+    image: timursamanchi/quote-docker-app-backend
+    container_name: quote-backend
+    ports:
+      - "8080:8080"
+ 
+  frontend:
+    image: timursamanchi/quote-docker-app-frontend
+    container_name: quote-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend 
