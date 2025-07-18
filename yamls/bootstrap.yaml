@@ -15,7 +15,7 @@ metadata:
   labels:
     app: quote-backend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: quote-backend
@@ -25,10 +25,10 @@ spec:
         app: quote-backend
     spec:
       containers:
-        - name: backend
-          image: timursamanchi/quote-docker-app-backend
-          ports:
-            - containerPort: 8080
+      - name: backend
+      image: timursamanchi/quote-docker-app-backend
+      ports:
+        - containerPort: 8080
 
 # Backend Service
 ---
@@ -58,7 +58,7 @@ metadata:
   labels:
     app: quote-frontend
 spec:
-  replicas: 1
+  replicas: 2
   selector:
     matchLabels:
       app: quote-frontend
@@ -67,11 +67,11 @@ spec:
       labels:
         app: quote-frontend
     spec:
-      containers:
-        - name: frontend
-          image: timursamanchi/quote-docker-app-frontend
-          ports:
-            - containerPort: 80
+    containers:
+      - name: frontend
+        image: timursamanchi/quote-docker-app-frontend
+        ports:
+          - containerPort: 80
 
 # Frontend Service
 ---
@@ -91,8 +91,7 @@ spec:
       port: 80
       targetPort: 80
 ---
-# ingress.yaml
-
+# nginx-ingress.yaml
 apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
@@ -101,16 +100,14 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
-  ingressClassName: nginx
   rules:
-  - host: quote.test
-    http:
-      paths:
-      - path: /
-        pathType: Prefix
-        backend:
-          service:
-            name: quote-frontend
-            port:
-              number: 80
+    - http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: quote-frontend
+                port:
+                  number: 80
 ---
